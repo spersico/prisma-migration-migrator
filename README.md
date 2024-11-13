@@ -14,6 +14,7 @@ So the flow would be:
 
 
 ## TODO
+- BUG: Avoid overwriting the generated migration if the file already exists!!!!
 - Figure out if the migrations can be run in a way that prisma detects it doesn't need to make other changes (figure out if on top of the knex history table, the migration can be modified to update the prisma history table). This would enable that prisma never notices that it's not actually running the migrations.
 - The knex config part of the setup could be better. Maybe a function that takes a knexfile and modifies it enough to work as expected? That way setting this up would just be a matter of running the migrator, setting up knex with the same db as prisma, and using the modifier function to configure the knex migration source.
 - Improve the docs!
