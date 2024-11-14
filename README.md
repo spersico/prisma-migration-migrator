@@ -6,7 +6,6 @@ This way, you get the auto generation of SQL migrations, but you also get the ab
 
 The idea is to use Prisma to generate the schema and the migrations, but running them through Knex.
 
-To do this, after setting this up, generate the migrations with prisma (but DO NOT run them), convert them to Knex migrations (using the script on this package), and then run the Knex migrations (using the knex config modifier on this package).
 
 So the flow would be:
 
