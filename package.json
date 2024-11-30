@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Ever wanted to use JS when using Prisma migrations? This is the tool for you.",
   "type": "module",
-  "author": "Santiago Persico",
+  "author": "spersico",
   "private": false,
   "license": "MIT",
   "scripts": {
