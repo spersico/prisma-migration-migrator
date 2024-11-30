@@ -1,4 +1,11 @@
-import { lstat, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import {
+  access,
+  lstat,
+  mkdir,
+  readdir,
+  readFile,
+  writeFile,
+} from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { identify } from 'sql-query-identifier';
@@ -49,22 +56,41 @@ async function convertPrismaMigrationsToKnexMigrations(
 
   let prismaMigrationsDirectories;
   try {
-    const everythingInsidePrismaMigrations = await readdir(
-      prismaMigrationsDir,
-    ).then((files) =>
-      Promise.all(
-        files.map(async (fileName) =>
-          lstat(path.join(prismaMigrationsDir, fileName)).then((stat) => ({
-            fileName,
-            elementPath: path.join(prismaMigrationsDir, fileName),
-            stat,
-          })),
-        ),
-      ),
-    );
+    prismaMigrationsDirectories = await readdir(prismaMigrationsDir).then(
+      (files) =>
+        Promise.all(
+          files.map(async (fileName) =>
+            lstat(path.join(prismaMigrationsDir, fileName)).then(
+              async (stat) => {
+                if (!stat.isDirectory())
+                  return { skipReason: `Element is not a folder`, fileName };
 
-    prismaMigrationsDirectories = everythingInsidePrismaMigrations.filter(
-      ({ stat }) => stat.isDirectory(),
+                const baseSqlPath = path.join(
+                  prismaMigrationsDir,
+                  fileName,
+                  'migration.sql',
+                );
+
+                const finalMigrationPath = coLocateWithPrismaMigrations
+                  ? path.join(prismaMigrationsDir, fileName, 'migration.mjs')
+                  : path.join(knexMigrationsDir, `${fileName}.mjs`);
+
+                const alreadyExists = await access(finalMigrationPath)
+                  .then(() => true)
+                  .catch(() => false);
+
+                if (alreadyExists)
+                  return { skipReason: 'Migration already exists', fileName };
+
+                return {
+                  fileName,
+                  baseSqlPath,
+                  finalMigrationPath,
+                };
+              },
+            ),
+          ),
+        ).then((dirs) => dirs.filter(({ skipReason }) => !skipReason)),
     );
   } catch (error) {
     console.error('> Error reading Prisma migrations directory:', error);
@@ -74,11 +100,12 @@ async function convertPrismaMigrationsToKnexMigrations(
   let migrations = [];
   try {
     migrations = await Promise.all(
-      prismaMigrationsDirectories.map(({ fileName }) =>
-        readFile(
-          path.join(prismaMigrationsDir, fileName, 'migration.sql'),
-          'utf-8',
-        ).then((sql) => ({ fileName, sql })),
+      prismaMigrationsDirectories.map(({ baseSqlPath, finalMigrationPath }) =>
+        readFile(baseSqlPath, 'utf-8').then((sql) => ({
+          baseSqlPath,
+          finalMigrationPath,
+          sql,
+        })),
       ),
     );
   } catch (error) {
@@ -88,15 +115,12 @@ async function convertPrismaMigrationsToKnexMigrations(
 
   try {
     const knexMigrations = await Promise.all(
-      migrations.map(async ({ fileName, sql }) => {
+      migrations.map(async ({ sql, finalMigrationPath }) => {
         const parsedSQL = identify(sql);
         const knexMigration = generateKnexMigration(parsedSQL);
-        const knexMigrationPath = coLocateWithPrismaMigrations
-          ? path.join(prismaMigrationsDir, fileName, 'migration.mjs')
-          : path.join(knexMigrationsDir, `${fileName}.mjs`);
 
-        await writeFile(knexMigrationPath, knexMigration);
-        console.log(`> > Generated ${knexMigrationPath}`);
+        await writeFile(finalMigrationPath, knexMigration);
+        console.log(`> > Generated ${finalMigrationPath}`);
       }),
     );
     console.log(
@@ -133,10 +157,8 @@ export async function down(knex) {
 
 // If the script is run directly, execute the function with the command-line argument
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const userProvidedDir = process.argv[2];
-  convertPrismaMigrationsToKnexMigrations({
-    prismaFolder: userProvidedDir,
-  }).catch((err) => {
+  const prismaFolder = process.argv[2];
+  convertPrismaMigrationsToKnexMigrations({ prismaFolder }).catch((err) => {
     console.error('Error:', err);
     process.exit(1);
   });
