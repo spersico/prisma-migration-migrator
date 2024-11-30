@@ -17,8 +17,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           npm version patch -m "Bump version to %s [skip ci]"
-          echo git config user.name
-          echo git config user.email
           git add package.json
           git commit -m "Bump version to $(jq -r .version package.json) [skip ci]"
           git push
