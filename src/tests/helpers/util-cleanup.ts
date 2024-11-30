@@ -2,8 +2,15 @@ import { existsSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import pg from 'pg';
 
-import { readdir, unlink } from 'node:fs/promises';
+import { readdir, rmdir, unlink } from 'node:fs/promises';
 import { baseDBUrl, knexDb, prismaDb, prismaDir } from './test-constants.js';
+
+const ProtectedFolders = [
+  '20241112185404_init',
+  '20241112190624_new_delete_field',
+  'prisma',
+  'migrations',
+];
 
 async function resetDatabase(databaseName: string) {
   const client = new pg.Client({ connectionString: baseDBUrl + '/postgres' });
@@ -31,12 +38,16 @@ async function resetDatabase(databaseName: string) {
 }
 async function removeMigrationFiles(dir: string) {
   const entries = await readdir(dir, { withFileTypes: true });
-
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      await removeMigrationFiles(fullPath);
+      if (!ProtectedFolders.includes(entry.name)) {
+        await rmdir(fullPath, { recursive: true });
+        console.log(`Removed folder: ${entry.name}`);
+      } else {
+        await removeMigrationFiles(fullPath);
+      }
     } else if (entry.isFile() && entry.name === 'migration.mjs') {
       await unlink(fullPath);
       console.log(`Removed file: ${fullPath}`);
