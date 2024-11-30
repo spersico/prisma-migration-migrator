@@ -15,13 +15,14 @@ jobs:
       - run: npm ci
       - run: |
           npm version patch -m "Bump version to %s [skip ci]"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           echo git config user.name
           echo git config user.email
           git add package.json
           git commit -m "Bump version to $(jq -r .version package.json) [skip ci]"
           git push
+      - run: npm run build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
