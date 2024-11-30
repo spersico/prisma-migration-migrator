@@ -19,7 +19,7 @@ jobs:
           npm version patch -m "Bump version to %s [skip ci]"
           git add .
           git commit -m "Bump version to $(jq -r .version package.json) [skip ci]"
-          git push --force
+          git push
       - run: npm run build
       - run: npm publish
         env:
