@@ -1,6 +1,6 @@
 ## Description
 
-This project is a WIP of how to use [Knex's migration engine](https://knexjs.org/guide/migrations.html) to run migrations, while keeping Prisma as the source of truth.This way, you get the auto generation of SQL migrations, but you also get the ability to use JS to do migrations. 
+This WIP project of how to use [Knex's migration engine](https://knexjs.org/guide/migrations.html) to run migrations, while keeping Prisma as the source of truth.This way, you get the auto generation of SQL migrations, but you also get the ability to use JS to do migrations. 
 
 The idea is to use Prisma to generate the schema and the migrations, but running them through [Knex](https://knexjs.org).
 
