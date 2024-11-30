@@ -11,7 +11,8 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-*.tsbuildinfo
+tsconfig.build.tsbuildinfo
+tsconfig.tsbuildinfo
 
 # OS
 .DS_Store

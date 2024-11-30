@@ -6,6 +6,6 @@
     "noEmit": false,
     "emitDeclarationOnly": false
   },
-  "include": ["src/index.ts", "src/migrationSource.mjs"],
+  "include": ["src/index.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,6 +1,9 @@
 import path from 'node:path';
 import dotenv from 'dotenv';
+
 import { PrismaFolderShapedMigrationSource } from './src/migrationSource.mjs';
+// If you seeing this to figure out how to use it, here you should replace this path with prisma-migration-migrator
+
 import Knex from 'knex';
 dotenv.config();
 

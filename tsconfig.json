@@ -21,7 +21,8 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "lib": ["es2022"]
+    "lib": ["es2022"],
+    "types": ["node"]
   },
   "include": ["**/*.ts", "**/*.mjs"],
   "exclude": ["node_modules"]

@@ -15,7 +15,7 @@ const compat = new FlatCompat({
 });
 
 export default [{
-    ignores: ["**/.eslintrc.js"],
+    ignores: ["**/.eslintrc.js", "**/eslint.config.mjs"],
 }, ...compat.extends("plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"), {
     plugins: {
         "@typescript-eslint": typescriptEslintEslintPlugin,
@@ -33,7 +33,8 @@ export default [{
 
         parserOptions: {
             project: "tsconfig.json",
-            tsconfigRootDir: "/Users/spersico/Projects/prisma-migration-to-knex-migration",
+            tsconfigRootDir: __dirname,
+            sourceType: 'module',
         },
     },
 
