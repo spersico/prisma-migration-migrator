@@ -50,9 +50,9 @@ This way, you get the auto generation of SQL migrations, while gaining ability t
     
     Now if you run `npx knex migrate:latest`, knex will run the migrations that were not run by prisma.
     
-    **Congrats! You now have the power to run sorted, JS-powered migrations!**
+    **Congrats! You now have the power to run Knex-powered migrations!**
 
-4. **Extra Step:** After running a migration from knex the first time, you need to add knex's migration history table to the prisma schema. This way, prisma will ignore the tables knex uses to track migration history. To do this, copy the following to your prisma schema:
+4. **Extra Step:** After running a migration from knex for the first time, you need to add knex's migration history table to the prisma schema. This way, prisma will ignore the tables knex uses to track migration history. To do this, copy the following to your prisma schema:
     ```prisma
     model knex_migrations {
       @@ignore
@@ -89,13 +89,6 @@ Check [knexjs' official docs](https://knexjs.org/guide/migrations.html) for more
 ## Notes:
   - The `prisma-to-knex` script will only convert the migrations that were not converted before. This way, you can run the script multiple times, and it will only convert the new migrations.
   - The `knexFilePrismaAdapter` is a helper function that adapts the knexfile to work with prisma. It will add the necessary tables to the knex migration history table, and will filter the migrations that were already run by prisma. This way, knex will only run the migrations that were not run by prisma (or itself) before. The Prisma ones will be ignored by the adapter, and the knex ones... well, that's the knex_migrations table for!.
-  - You have Knex's full power:
-    - You can now use JS to do migrations.
-    - You have access to all the knex plugins and features.
-    - You can also use the `up` and `down` commands to handle rollbacks!
-  
-    Check [knexjs' official docs](https://knexjs.org/guide/migrations.html) for more details on how to use knex migrations
-
 
 ## TODO
 - Figure out if the migrations can be run in a way that prisma detects it doesn't need to make other changes (figure out if on top of the knex history table, the migration can be modified to update the prisma history table). This would enable that prisma never notices that it's not actually running the migrations. See: https://github.com/prisma/prisma/blob/main/packages/migrate/src/Migrate.ts. Maybe I can use that to my advantage.
