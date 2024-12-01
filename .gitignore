@@ -13,6 +13,7 @@ yarn-error.log*
 lerna-debug.log*
 tsconfig.build.tsbuildinfo
 tsconfig.tsbuildinfo
+*.tsbuildinfo
 
 # OS
 .DS_Store
