@@ -24,3 +24,17 @@ model Article {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model knex_migrations {
+  @@ignore
+  id           Int      @id @default(autoincrement())
+  name         String
+  batch        Int
+  migration_time DateTime
+}
+
+model knex_migrations_lock {
+  @@ignore
+  id           Int @id
+  is_locked    Boolean
+}

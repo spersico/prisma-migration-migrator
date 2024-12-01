@@ -1,31 +1,16 @@
-import path from 'node:path';
-import { PrismaFolderShapedMigrationSource } from '../../migrationSource.mjs';
 import { knexTestDbUrl } from './test-constants.js';
 import Knex from 'knex';
+import { knexFilePrismaAdapter } from '../../knexFilePrismaAdapter.mjs';
 
 export async function runKnexMigrations() {
-  const baseConfig = {
+  const knexfileConfig = {
     client: 'pg',
     connection: knexTestDbUrl,
-  };
-
-  const knexInstance = Knex(baseConfig);
-
-  const config = {
-    ...baseConfig,
     migrations: {
-      migrationSource: new PrismaFolderShapedMigrationSource({
-        skipPrismaMigrationsCheck: true,
-        knexInstance,
-        migrationsBaseDirectory: path.join(
-          process.cwd(),
-          'prisma',
-          'migrations',
-        ),
-      }),
+      directory: 'prisma/migrations',
     },
   };
 
-  const knexClient = await Knex(config);
+  const knexClient = await Knex(knexFilePrismaAdapter(knexfileConfig));
   await knexClient.migrate.latest();
 }

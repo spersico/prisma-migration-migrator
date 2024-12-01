@@ -167,3 +167,4 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 export { convertPrismaMigrationsToKnexMigrations };
 export type { Parameters as ConvertPrismaMigrationsToKnexMigrationsParameters };
 export { PrismaFolderShapedMigrationSource } from './migrationSource.mjs';
+export { knexFilePrismaAdapter } from './knexFilePrismaAdapter.mjs';

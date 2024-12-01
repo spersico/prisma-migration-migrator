@@ -15,9 +15,10 @@
     "test:migrate:build": "npm run build && node ./dist/index.js",
     "test:migrate": "tsx src/index.ts",
     "test:cleanup": "tsx src/tests/cleanup.ts",
-    "test:prisma:create": "prisma migrate dev --create-only",
     "test:knex:create": "knex migrate:make",
+    "test:prisma:create": "prisma migrate dev --create-only",
     "test:knex:sync": "knex migrate:latest",
+    "test:prisma:sync": "prisma migrate dev",
     "test:manual": "npm run test:prisma:create && npm run test:migrate && npm run test:knex:sync",
     "test:full": "tsx src/tests/index.ts",
     "prettier": "prettier --write ."
@@ -26,6 +27,7 @@
     "sql-query-identifier": "^2.7.0"
   },
   "devDependencies": {
+    "@prisma/client": "^5.22.0",
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.14.0",
     "@types/express": "^5.0.0",

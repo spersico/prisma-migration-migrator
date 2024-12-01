@@ -1,5 +1,6 @@
 import { access, readdir } from 'fs/promises';
 import path from 'node:path';
+import Knex from 'knex';
 
 /**
  * This migration source is designed to pick up Migration files arranged in folder, Prisma-style.
@@ -13,12 +14,12 @@ export class PrismaFolderShapedMigrationSource {
   migrationsBaseDirectory;
 
   constructor({
-    knexInstance,
+    knexfileConfig,
     migrationsBaseDirectory,
     silent = true,
     skipPrismaMigrationsCheck = false,
   }) {
-    this.knex = knexInstance;
+    this.knex = Knex(knexfileConfig);
     this.migrationsBaseDirectory = migrationsBaseDirectory;
     this.silent = silent;
     this.skipPrismaMigrationsCheck = !!skipPrismaMigrationsCheck;
