@@ -3,6 +3,12 @@
 /node_modules
 /build
 
+
+# Generated Migrations
+/prisma/**/migration.mjs
+/prisma/knex_migrations/*.mjs
+
+
 # Logs
 logs
 *.log
