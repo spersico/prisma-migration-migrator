@@ -1,11 +1,10 @@
-import { knexTestDbUrl } from './test-constants.js';
 import Knex from 'knex';
 import { knexFilePrismaAdapter } from '../../knexFilePrismaAdapter.mjs';
 
-export async function runKnexMigrations() {
+export async function runKnexMigrations(databaseUrl) {
   const knexfileConfig = {
     client: 'pg',
-    connection: knexTestDbUrl,
+    connection: databaseUrl,
     migrations: {
       directory: 'prisma/migrations',
     },
@@ -13,4 +12,5 @@ export async function runKnexMigrations() {
 
   const knexClient = await Knex(knexFilePrismaAdapter(knexfileConfig));
   await knexClient.migrate.latest();
+  knexClient.destroy();
 }

@@ -1,44 +1,42 @@
-import { assert } from 'console';
-import { convertPrismaMigrationsToKnexMigrations } from '../index.js';
-import { cleanup } from './helpers/util-cleanup.js';
-import { runKnexMigrations } from './helpers/util-knex-migrator.js';
-import { runPrismaMigrations } from './helpers/util-prisma-migrator.js';
-import { snapshotDbStructure } from './helpers/util-snapshot.js';
+import base from './cases/base.js';
 import { knexTestDbUrl, prismaDbUrl } from './helpers/test-constants.js';
+import type { TestParameters } from './types.js';
 
-// Main test function (right now it only runs one test case)
-async function main() {
-  console.log('Running test...');
-  await cleanup();
+const cases: TestParameters[] = [
+  {
+    dbUrl: prismaDbUrl,
+    altDbUrl: knexTestDbUrl, // uses different DBs, to test if they both produce the same migrations. Expect a warning
+    strategy: 'co-located',
+  },
+  {
+    dbUrl: prismaDbUrl,
+    altDbUrl: knexTestDbUrl,
+    strategy: 'standalone', // Alternative strategy of where to set the knex migrations
+  },
+  {
+    dbUrl: prismaDbUrl, // Uses the same DB, to test if moving from prisma to knex is seamless
+    strategy: 'co-located',
+  },
+  {
+    dbUrl: prismaDbUrl,
+    strategy: 'standalone', // Alternative strategy of where to set the knex migrations
+  },
+];
 
-  console.log('Running Prisma Migrations...');
-  await runPrismaMigrations();
-  console.log('Prisma Migrations run');
-
-  console.log('Generating Knex Migrations...');
-  await convertPrismaMigrationsToKnexMigrations();
-  console.log('Knex Migrations generated');
-
-  console.log('Running Knex Migrations...');
-  await runKnexMigrations();
-  console.log('Knex Migrations run');
-
-  const prismaSnapshot = await snapshotDbStructure(prismaDbUrl);
-  console.log('Prisma DB snapshot obtained');
-  const knexSnapshot = await snapshotDbStructure(knexTestDbUrl);
-  console.log('Knex DB snapshot obtained');
-
-  assert(prismaSnapshot === knexSnapshot, 'DB structures do not match.');
-  if (prismaSnapshot !== knexSnapshot)
-    throw new Error('DB structures do not match.');
+async function executeAllTests() {
+  try {
+    for await (const parameters of cases) {
+      console.group('Running test with parameters', parameters);
+      await base({ ...parameters, silent: true });
+      console.groupEnd();
+      console.log(`\x1b[32mTest pass\x1b[0m`);
+    }
+    console.log(`\x1b[32mAll tests passed\x1b[0m`);
+    process.exit(0);
+  } catch (error) {
+    console.error(`\x1b[31mError running tests\x1b[0m`, error);
+    process.exit(1);
+  }
 }
 
-main()
-  .catch((err) => {
-    console.error('Test failed:', err);
-    process.exit(1);
-  })
-  .then(() => {
-    console.log('\x1b[32m%s\x1b[0m', 'Test passed: DB structures match.');
-    process.exit(0);
-  });
+executeAllTests();

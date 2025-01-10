@@ -44,5 +44,7 @@ export async function snapshotDbStructure(
   } catch (error) {
     console.error(`Error snapshotting DB structure ${client.database}:`, error);
     throw error;
+  } finally {
+    await client.end();
   }
 }
