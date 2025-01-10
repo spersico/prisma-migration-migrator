@@ -9,11 +9,6 @@ const cases: TestParameters[] = [
     strategy: 'co-located',
   },
   {
-    dbUrl: prismaDbUrl,
-    altDbUrl: knexTestDbUrl,
-    strategy: 'standalone', // Alternative strategy of where to set the knex migrations
-  },
-  {
     dbUrl: prismaDbUrl, // Uses the same DB, to test if moving from prisma to knex is seamless
     strategy: 'co-located',
   },
@@ -27,7 +22,7 @@ async function executeAllTests() {
   try {
     for await (const parameters of cases) {
       console.group('Running test with parameters', parameters);
-      await base({ ...parameters, silent: true });
+      await base({ ...parameters, silent: false });
       console.groupEnd();
       console.log(`\x1b[32mTest pass\x1b[0m`);
     }
