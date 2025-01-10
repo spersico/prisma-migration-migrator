@@ -15,6 +15,7 @@ type Parameters = {
   prismaFolder?: string;
   knexMigrationsFolder?: string;
   coLocateWithPrismaMigrations?: boolean;
+  silent?: boolean;
 };
 
 async function convertPrismaMigrationsToKnexMigrations(
@@ -24,8 +25,7 @@ async function convertPrismaMigrationsToKnexMigrations(
   const __dirname = path.dirname(__filename);
   const baseProjectDir = path.resolve(__dirname, '..');
 
-  const coLocateWithPrismaMigrations =
-    params?.coLocateWithPrismaMigrations || true;
+  const coLocateWithPrismaMigrations = !!params?.coLocateWithPrismaMigrations;
   const prismaFolder = params?.prismaFolder || 'prisma';
 
   let prismaMigrationsDir, knexMigrationsDir;
@@ -36,18 +36,21 @@ async function convertPrismaMigrationsToKnexMigrations(
       : path.resolve(baseProjectDir, prismaFolder);
 
     prismaMigrationsDir = path.join(prismaRootDir, 'migrations');
-    console.log(`> Converting Prisma migrations from ${prismaMigrationsDir}`);
+    !params.silent &&
+      console.log(`> Converting Prisma migrations from ${prismaMigrationsDir}`);
 
     if (!coLocateWithPrismaMigrations) {
       knexMigrationsDir =
         params?.knexMigrationsFolder ||
         path.join(prismaRootDir, 'knex_migrations');
-      console.log(`> Will write Knex migrations to ${knexMigrationsDir}`);
+      !params.silent &&
+        console.log(`> Will write Knex migrations to ${knexMigrationsDir}`);
       await mkdir(knexMigrationsDir, { recursive: true });
     } else {
-      console.log(
-        `> Will co-locate Knex migrations with Prisma migrations in the same directory`,
-      );
+      !params.silent &&
+        console.log(
+          `> Will co-locate Knex migrations with Prisma migrations in the same directory`,
+        );
     }
   } catch (err) {
     console.error('> Error creating knex migrations directory:', err);
@@ -120,9 +123,10 @@ async function convertPrismaMigrationsToKnexMigrations(
         const knexMigration = generateKnexMigration(parsedSQL);
 
         await writeFile(finalMigrationPath, knexMigration);
-        console.log(`> > Generated ${finalMigrationPath}`);
+        !params.silent && console.log(`> > Generated ${finalMigrationPath}`);
       }),
     );
+
     console.log(
       `> Successfully converted ${knexMigrations.length} Prisma migrations to Knex migrations`,
     );
