@@ -9,18 +9,19 @@ export default async function main(parameters: TestParameters) {
   const { strategy, dbUrl, altDbUrl = dbUrl, silent = false } = parameters;
   await cleanup(strategy, silent);
 
-  console.log('Running Prisma Migrations...');
+  !silent && console.log('Running Prisma Migrations...');
   await runPrismaMigrations(dbUrl);
 
-  console.log('Generating Knex Migrations...');
+  !silent && console.log('Generating Knex Migrations...');
   await convertPrismaMigrationsToKnexMigrations({
     coLocateWithPrismaMigrations: strategy === 'co-located',
+    silent,
   });
-  console.log('Knex Migrations generated');
+  !silent && console.log('Knex Migrations generated');
 
-  console.log('Running Knex Migrations...');
+  !silent && console.log('Running Knex Migrations...');
   await runKnexMigrations(altDbUrl);
-  console.log('Knex Migrations applied');
+  !silent && console.log('Knex Migrations applied');
 
   const prismaState = await snapshotDbStructure(dbUrl);
   const knexState = await snapshotDbStructure(altDbUrl);
