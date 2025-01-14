@@ -7,11 +7,12 @@
   "private": false,
   "license": "MIT",
   "bin": {
-    "prisma-migration-migrator": "./dist/index.js"
+    "prisma-migration-migrator": "./dist/index.js",
+    "prisma-diff-to-knex": "./dist/prismaDiffToKnexMigration.js"
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "rm -rf dist && tsc --project tsconfig.build.json",
+    "build": "rm -rf dist && rm -rf tsconfig.build.tsbuildinfo && tsc --project tsconfig.build.json",
     "test:migrate:build": "npm run build && node ./dist/index.js",
     "test:migrate": "tsx src/index.ts",
     "test:cleanup": "tsx src/tests/helpers/util-cleanup.ts",
@@ -20,10 +21,13 @@
     "test:knex:sync": "knex migrate:latest",
     "test:prisma:sync": "prisma migrate dev",
     "test:manual": "npm run test:prisma:create && npm run test:migrate && npm run test:knex:sync",
-    "test:full": "tsx src/tests/index.ts",
-    "prettier": "prettier --write ."
+    "test:full": "tsx src/tests/tests.ts",
+    "prettier": "prettier --write .",
+    "migration:generate": "npx knex migrate:make $1 | npx prisma-diff-to-knex"
   },
   "dependencies": {
+    "chalk": "^5.4.1",
+    "inquirer": "^12.3.0",
     "sql-query-identifier": "^2.7.0"
   },
   "devDependencies": {

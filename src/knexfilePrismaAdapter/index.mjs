@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PrismaFolderShapedMigrationSource } from './migrationSource.mjs';
-import path from 'path';
+import { KnexMigrationSourcePrismaStyle } from './knexMigrationSourcePrismaStyle.mjs';
+import path from 'node:path';
 
 /**
+ * ATTENTION: ONLY NECESSARY IF YOU WANT TO CO-LOCATE KNEX MIGRATIONS WITH PRISMA MIGRATIONS (put them in the same folder structure)
+ * IF YOU PLAN TO LEAVE THE MIGRATIONS IN A SEPARATE FOLDER, YOU DON'T NEED THIS AT ALL, JUST USE KNEX NORMALLY
+ * 
  * This function adapts the knexfile configuration object to use the PrismaFolderShapedMigrationSource.
- * It's what it allows us to pick up the migrations from the prisma/migrations folder.
+ * It's what it allows us to pick up the migrations from the prisma/migrations folder (if you decide to co-locate migrations with Prisma)
+ * It also allows the migrator to pick up where to put the migrated migrations.
  * 
  * The only thing that gets modified is the migrations object (https://github.com/knex/knex/blob/176151d8048b2a7feeb89a3d649a5580786d4f4e/types/index.d.ts#L3139)
  * The rest of the configuration object is passed to the knex instance.
@@ -18,6 +22,7 @@ export function knexFilePrismaAdapter(knexfileConfig) {
     directory,
     sortDirsSeparately: _,
     loadExtensions: __,
+    extension: ___,
     ...otherMigrationsConfigs
   } = knexfileConfig?.migrations || {};
   // Knex resets the migrationSource if any FS related config is set, so we need to remove them from the config object
@@ -27,17 +32,15 @@ export function knexFilePrismaAdapter(knexfileConfig) {
     ? path.join(process.cwd(), directory)
     : path.join(process.cwd(), 'prisma', 'migrations'); // default to ./prisma/migrations
 
-  // NOTE: It's not strictly necessary to use this adapter function, you can use the PrismaFolderShapedMigrationSource directly.
-  // Bear in mind though, that you'll have to provide a knex instance to it (so that it recognizes the last migration Prisma ran).
-  // It's a bit of a bother. This function abstracts that for you.
   return {
     ...knexfileConfig,
     migrations: {
       ...otherMigrationsConfigs,
-      migrationSource: new PrismaFolderShapedMigrationSource({
-        knexfileConfig,
+      migrationSource: new KnexMigrationSourcePrismaStyle({
         migrationsBaseDirectory,
       }),
     },
   };
 }
+
+export { KnexMigrationSourcePrismaStyle };

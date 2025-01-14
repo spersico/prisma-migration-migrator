@@ -1,6 +1,6 @@
 export type TestParameters = {
-  strategy: 'co-located' | 'standalone';
+  colocate?: boolean;
   dbUrl: string;
-  altDbUrl?: string;
   silent?: boolean;
+  skipInitialPrismaMigrationRun?: boolean;
 };

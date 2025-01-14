@@ -8,21 +8,23 @@ const baseDir = path.resolve(__dirname, '..', '..', '..');
 
 const prismaDir = path.join(baseDir, 'prisma');
 const knexMigrationsDir = path.join(prismaDir, 'knex_migrations');
+const prismaSchemaPath = path.resolve('prisma', 'schema.prisma');
 
 const baseDBUrl = 'postgres://myuser:mypassword@localhost:5432';
 const password = 'mypassword';
-const prismaDb = 'test_db_prisma';
-const knexDb = 'test_db_knex';
-const prismaDbUrl = `${baseDBUrl}/${prismaDb}`;
-const knexTestDbUrl = `${baseDBUrl}/${knexDb}`;
+const testDbName = 'test_db';
+const testDbUrl = `${baseDBUrl}/${testDbName}`;
+
+const expectedInitialNumberOfMigrations = 2;
 
 export {
+  baseDir,
   prismaDir,
   knexMigrationsDir,
+  prismaSchemaPath,
   baseDBUrl,
   password,
-  prismaDb,
-  knexDb,
-  prismaDbUrl,
-  knexTestDbUrl,
+  testDbName,
+  testDbUrl,
+  expectedInitialNumberOfMigrations,
 };

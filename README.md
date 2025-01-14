@@ -1,21 +1,37 @@
 ## Description
 
 A way to use [Knex's migration engine](https://knexjs.org/guide/migrations.html) to run migrations, while keeping Prisma as the source of truth. 
-This way, you get the auto generation of SQL migrations, while gaining ability to use JS to do migrations. 
 
-## So the flow would be:
+This way, you get the ORM and the auto generation of DDL SQL from Prisma, while gaining the power of Knex's migration engine to run them.
 
-1. You set up this thing (see below)
-2. You run `prisma migrate dev --create-only` to create a new migration, but don't run it
-3. You run `yarn prisma-to-knex` to convert the prisma migration to a knex migration. 
-  
-    The knex migration will be right next to the prisma migration, contain all the SQL of the original, and you can modify it however you like. It's a knex migration, do what you want.
-4. You run `knex migrate:latest` to run the knex migrations. It will ignore the migrations already run by prisma or knex.
-5. ??
+You can use Prisma to generate the migration SQL, but you never run the migrations with Prisma. Instead, from then on, the prisma-generated SQL DDL gets added into Knex migrations.
+
+## Usage (after setting it up):
+
+You can do 2 things:
+1. You can migrate the existing prisma migrations to knex migrations. This will convert every prisma migration, to a knex migration, and set knex up
+
+
+
+**The flow them, would for updating the schema would then look like the following:**
+
+0. You update the prisma schema (say, add a field to a table).
+1. You run `npx knex migrate:make 'example_migration_name' | npx prisma-diff-to-knex` to create a new sql migration based of the schema.
+3. You run `knex migrate:latest` to run the knex migrations. It will ignore the migrations already run by prisma.
+4. ??
 5. Profit!
 
 
+
+
 ## Set up
+The setup was kinda complex, so I made a script to automate it:
+The script will:
+- Create a `knexfile.mjs` in the root of your project.
+- Add a `create-migration` script to your `package.json` that will create a prisma migration and then convert it to a knex migration (the new flow of migration generation).
+- Add the necessary tables to the prisma schema to ignore the knex migration history tables.
+- Add the migration files for the prisma schema update 
+
 *It's a bit involved, but I think it's worth it.*
 
 1. **First, install the dependencies**: `npm install prisma-migration-migrator knex`  

@@ -2,7 +2,7 @@ import { exec } from 'node:child_process';
 import util from 'util';
 import path from 'node:path';
 import pg from 'pg';
-import { password } from './test-constants.js';
+import { password, baseDir } from './constants.js';
 import { writeFile } from 'node:fs/promises';
 
 const execPromise = util.promisify(exec);
@@ -23,9 +23,8 @@ export async function snapshotDbStructure(
     }
 
     if (!silent) {
-      const rootDir = path.resolve(__dirname, '..');
       const outputFilePath = path.join(
-        rootDir,
+        baseDir,
         `TEST_DDL_${client.database}.sql`,
       );
 

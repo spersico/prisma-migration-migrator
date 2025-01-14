@@ -1,22 +1,27 @@
 import { existsSync, rmSync } from 'node:fs';
+import { readdir, rm, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import pg from 'pg';
 
-import { readdir, rm, unlink } from 'node:fs/promises';
 import {
   baseDBUrl,
-  knexDb,
   knexMigrationsDir,
-  prismaDb,
   prismaDir,
-} from './test-constants.js';
+  prismaSchemaPath,
+  testDbName,
+} from './constants.js';
 
-const ProtectedFolders = [
-  '20241112185404_init',
-  '20241112190624_new_delete_field',
-  'prisma',
-  'migrations',
-];
+function isTestProtectedFolder(entry: string) {
+  const protectedFolders = [
+    'init',
+    'new_delete_field',
+    'prisma',
+    'migrations',
+    'add_knex',
+  ];
+
+  return protectedFolders.some((folderName) => entry.includes(folderName));
+}
 
 async function resetDatabase(databaseName: string, silent = true) {
   const client = new pg.Client({ connectionString: baseDBUrl + '/postgres' });
@@ -57,7 +62,7 @@ async function removeMigrationFiles(dir: string, silent = true) {
     const fullPath = path.join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      if (!ProtectedFolders.includes(entry.name)) {
+      if (!isTestProtectedFolder(entry.name)) {
         await rm(fullPath, { recursive: true });
         !silent && console.log(`Removed folder: ${entry.name}`);
       } else {
@@ -77,17 +82,56 @@ function cleanupMigrationFolder(dir: string, silent = true) {
   }
 }
 
+async function resetPrismaSchemaFile(silent = true) {
+  const schemaDesiredContent = `
+  generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id          Int      @id @default(autoincrement())
+  title       String   @unique
+  description String?
+  body        String
+  deleted     Boolean  @default(false)
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+  
+model knex_migrations {
+@@ignore
+  id             Int       @id @default(autoincrement())
+  name           String?   @db.VarChar(255)
+  batch          Int?
+  migration_time DateTime? @db.Timestamptz(6)
+}
+
+model knex_migrations_lock {
+@@ignore
+  index     Int  @id @default(autoincrement())
+  is_locked Int?
+}
+`;
+
+  await writeFile(prismaSchemaPath, schemaDesiredContent);
+  !silent && console.log('Prisma schema reset successfully.');
+}
+
 // Cleanup function
-export async function cleanup(
-  strategy: 'co-located' | 'standalone',
-  silent = true,
-) {
-  if (strategy === 'co-located') {
+export async function cleanup(colocate: boolean, silent = true) {
+  if (colocate) {
     await removeMigrationFiles(prismaDir, silent);
   } else {
     cleanupMigrationFolder(knexMigrationsDir, silent);
   }
 
-  await resetDatabase(prismaDb);
-  await resetDatabase(knexDb);
+  await resetDatabase(testDbName);
+
+  await resetPrismaSchemaFile(silent);
 }

@@ -1,10 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
+  generator client {
   provider = "prisma-client-js"
 }
 
@@ -13,8 +8,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Article {
+  testField String?
   id          Int      @id @default(autoincrement())
   title       String   @unique
   description String?
@@ -22,19 +17,19 @@ model Article {
   deleted     Boolean  @default(false)
   published   Boolean  @default(false)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime
 }
-
+  
 model knex_migrations {
-  @@ignore
-  id           Int      @id @default(autoincrement())
-  name         String
-  batch        Int
-  migration_time DateTime
+@@ignore
+  id             Int       @id @default(autoincrement())
+  name           String?   @db.VarChar(255)
+  batch          Int?
+  migration_time DateTime? @db.Timestamptz(6)
 }
 
 model knex_migrations_lock {
-  @@ignore
-  id           Int @id
-  is_locked    Boolean
+@@ignore
+  index     Int  @id @default(autoincrement())
+  is_locked Int?
 }
