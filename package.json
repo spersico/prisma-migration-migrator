@@ -6,6 +6,9 @@
   "author": "spersico",
   "private": false,
   "license": "MIT",
+  "files": [
+    "/dist"
+  ],
   "bin": {
     "prisma-migration-migrator": "./dist/index.js"
   },
@@ -15,14 +18,10 @@
     "test:migrate:build": "npm run build && node ./dist/index.js",
     "test:migrate": "tsx src/index.ts",
     "test:cleanup": "tsx src/tests/helpers/util-cleanup.ts",
-    "test:knex:create": "knex migrate:make",
-    "test:prisma:create": "prisma migrate dev --create-only",
     "test:knex:sync": "knex migrate:latest",
-    "test:prisma:sync": "prisma migrate dev",
     "test:manual": "npm run test:prisma:create && npm run test:migrate && npm run test:knex:sync",
     "test:full": "tsx src/tests/tests.ts",
-    "prettier": "prettier --write .",
-    "migration:generate": "npx knex migrate:make $1 | npx prisma-diff-to-knex"
+    "prettier": "prettier --write ."
   },
   "dependencies": {
     "chalk": "^5.4.1",
