@@ -12,10 +12,11 @@ async function checkKnexFileExistence(baseDir) {
   knexfileExists = await findKnexfile(baseDir);
   if (!knexfileExists) {
     console.log(
-      `No knexfile found in the project. You'll want to run the setup script to set up knex and prisma together`,
+      `No knexfile found in the project. I'll run the setup script to set up knex and prisma together`,
     );
-    process.exit(1);
+    return true;
   }
+  return false;
 }
 
 async function checkPrismaSchema(baseDir, prismaFolderPath = 'prisma') {
@@ -26,8 +27,8 @@ async function checkPrismaSchema(baseDir, prismaFolderPath = 'prisma') {
   );
   const exists = await prismaSchemaExists(prismaSchemaPath);
   if (!exists) {
-    console.log(
-      `Prisma schema not found at (${prismaSchemaPath}) - First set Prisma up, then run the setup script`,
+    console.error(
+      `Prisma schema not found at (${prismaSchemaPath}) - First set Prisma up, then run this script again`,
     );
     process.exit(1);
   }
@@ -36,14 +37,21 @@ async function checkPrismaSchema(baseDir, prismaFolderPath = 'prisma') {
 
   if (!prismaHasKnexModels) {
     console.log(
-      `Prisma schema found at (${prismaSchemaPath}), but it doesn't have the knex models. Run the setup script to add them`,
+      `Prisma schema found at (${prismaSchemaPath}), but it doesn't have the knex models. I'll run the setup script to add them`,
     );
-    process.exit(1);
+    return true;
   }
+  return false;
 }
 
 export async function checkIfSetupIsNeeded({ prismaFolderPath }) {
   const baseDir = getBaseDirectory();
-  await checkKnexFileExistence(baseDir);
-  await checkPrismaSchema(baseDir, prismaFolderPath);
+
+  const knexFileExists = await checkKnexFileExistence(baseDir);
+  const prismaSchemaIsReady = await checkPrismaSchema(
+    baseDir,
+    prismaFolderPath,
+  );
+
+  return knexFileExists || prismaSchemaIsReady;
 }

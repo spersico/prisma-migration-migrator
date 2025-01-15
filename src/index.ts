@@ -11,7 +11,23 @@ async function executeMigrator() {
 
   try {
     if (!args.includes('--skip-check')) {
-      await checkIfSetupIsNeeded({ prismaFolderPath });
+      console.log(
+        '> No --skip-check flag detected. Checking if setup is needed for knex to run alongside prisma...',
+      );
+      const setupNeeded = await checkIfSetupIsNeeded({ prismaFolderPath });
+      if (setupNeeded) {
+        console.log(
+          `> Setup is needed. Running setup for knex to run alongside prisma...`,
+        );
+        await setup();
+        console.log(
+          '> Setup completed. Continuing with the migration conversion process...',
+        );
+      } else {
+        console.log(
+          '> Setup is not needed. Continuing with the migration conversion process...',
+        );
+      }
     }
 
     await migrator({ prismaFolderPath });
