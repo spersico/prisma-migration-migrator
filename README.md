@@ -6,6 +6,19 @@ This way, you get the ORM and the auto generation of DDL SQL from Prisma, while 
 
 You can use Prisma to generate the migration SQL, but you never run the migrations with Prisma. Instead, from then on, the prisma-generated SQL DDL gets added into Knex migrations.
 
+## Setup
+1. **First, install the dependencies**: `npm install knex dotenv`
+    > Note: You can use other package managers, like yarn or pnpm.
+2. **Run the setup script**: `npx prisma-migration-migrator`  
+    This script will:
+    - Create a `knexfile.mjs` in the root of your project.
+    - Add the necessary tables to the prisma schema to ignore the knex migration history tables.
+    - Add a `create-migration` script to your `package.json` that will create a prisma migration and then convert it to a knex migration (the new flow of migration generation).
+    - Run the script to convert the existing prisma migrations to knex migrations for the first time.
+3. **Run the script**: `npx prisma-migration-migrator`  
+    This script will convert all the existing prisma migrations to knex migrations, and sync the knex migration history with the prisma migration history. This way, Prisma's migration history will be preserved when running knex migrations.
+
+
 ## Usage (after setting it up):
 
 You can do 2 things:

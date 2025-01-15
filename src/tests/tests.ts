@@ -12,24 +12,22 @@ import { migrator } from '../migrator/index.js';
 async function test(parameters: TestParameters) {
   const {
     dbUrl,
-    colocate = false,
     silent = false,
     skipInitialPrismaMigrationRun = false,
   } = parameters;
   console.log(`T Test parameters:`, parameters);
-  await cleanup(colocate, silent);
+  await cleanup(silent);
 
   !skipInitialPrismaMigrationRun && (await runPrismaMigrations(dbUrl));
 
   console.log('T Conversion started');
   await migrator({
-    colocate,
     silent,
     knexMigrationsDir,
   });
   console.log('T Conversion completed');
 
-  const migrationsByKnex = await runKnexMigrations(dbUrl, colocate);
+  const migrationsByKnex = await runKnexMigrations(dbUrl);
 
   const prismaState = await snapshotDbStructure(dbUrl);
   const knexState = await snapshotDbStructure(dbUrl);
@@ -53,12 +51,6 @@ async function test(parameters: TestParameters) {
 const acceptanceCases: TestParameters[] = [
   { dbUrl },
   { dbUrl, skipInitialPrismaMigrationRun: true },
-  { dbUrl, colocate: true },
-  {
-    dbUrl,
-    colocate: true,
-    skipInitialPrismaMigrationRun: true,
-  },
 ];
 
 async function executeAllTests() {

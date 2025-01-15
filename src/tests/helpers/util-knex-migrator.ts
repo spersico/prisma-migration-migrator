@@ -1,9 +1,8 @@
 import Knex from 'knex';
-import { knexFilePrismaAdapter } from '../../knexfilePrismaAdapter/index.mjs';
 
-export async function runKnexMigrations(databaseUrl, colocate = false) {
+export async function runKnexMigrations(databaseUrl) {
   console.log('T Running Knex Migrations...');
-  let config: Knex.Knex.Config = {
+  const config: Knex.Knex.Config = {
     client: 'pg',
     connection: databaseUrl,
     migrations: {
@@ -12,13 +11,6 @@ export async function runKnexMigrations(databaseUrl, colocate = false) {
       directory: 'prisma/knex_migrations',
     },
   };
-
-  if (colocate) {
-    config = knexFilePrismaAdapter({
-      ...config,
-      migrations: { directory: 'prisma/migrations' },
-    });
-  }
 
   const knexClient = await Knex(config);
   const [, appliedMigrations] = await knexClient.migrate.latest();

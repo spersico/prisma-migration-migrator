@@ -1,27 +1,13 @@
 import { existsSync, rmSync } from 'node:fs';
-import { readdir, rm, unlink, writeFile } from 'node:fs/promises';
-import path from 'node:path';
+import { writeFile } from 'node:fs/promises';
 import pg from 'pg';
 
 import {
   baseDBUrl,
   knexMigrationsDir,
-  prismaDir,
   prismaSchemaPath,
   testDbName,
 } from './constants.js';
-
-function isTestProtectedFolder(entry: string) {
-  const protectedFolders = [
-    'init',
-    'new_delete_field',
-    'prisma',
-    'migrations',
-    'add_knex',
-  ];
-
-  return protectedFolders.some((folderName) => entry.includes(folderName));
-}
 
 async function resetDatabase(databaseName: string, silent = true) {
   const client = new pg.Client({ connectionString: baseDBUrl + '/postgres' });
@@ -49,29 +35,6 @@ async function resetDatabase(databaseName: string, silent = true) {
     throw error;
   } finally {
     await client.end();
-  }
-}
-async function removeMigrationFiles(dir: string, silent = true) {
-  if (!existsSync(dir))
-    throw new Error(
-      `RemoveMigrationFiles - Expected to exist directory (${dir}) does not exist .`,
-    );
-
-  const entries = await readdir(dir, { withFileTypes: true });
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      if (!isTestProtectedFolder(entry.name)) {
-        await rm(fullPath, { recursive: true });
-        !silent && console.log(`Removed folder: ${entry.name}`);
-      } else {
-        await removeMigrationFiles(fullPath);
-      }
-    } else if (entry.isFile() && entry.name === 'migration.mjs') {
-      await unlink(fullPath);
-      !silent && console.log(`Removed file: ${fullPath}`);
-    }
   }
 }
 
@@ -124,12 +87,8 @@ model knex_migrations_lock {
 }
 
 // Cleanup function
-export async function cleanup(colocate: boolean, silent = true) {
-  if (colocate) {
-    await removeMigrationFiles(prismaDir, silent);
-  } else {
-    cleanupMigrationFolder(knexMigrationsDir, silent);
-  }
+export async function cleanup(silent = true) {
+  cleanupMigrationFolder(knexMigrationsDir, silent);
 
   await resetDatabase(testDbName);
 

@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import { knexMigrationsLockSql, knexMigrationsSQl } from './constants.js';
-import type { MigratorParameters } from './types.js';
 
 async function checkIfTableIsPresent(
   prisma: PrismaClient,
@@ -34,11 +33,10 @@ async function createKnexMigrationsTable(prisma: PrismaClient): Promise<void> {
 
 async function syncKnexAndPrismaMigrations(
   prisma: PrismaClient,
-  params: MigratorParameters,
 ): Promise<void> {
   const res = await prisma.$executeRawUnsafe<number>(`
         INSERT INTO knex_migrations (name, batch, migration_time)
-          SELECT migration_name ${params.colocate ? '' : `|| '.mjs'`}, 1, finished_at
+          SELECT migration_name || '.mjs', 1, finished_at
           FROM _prisma_migrations
           WHERE migration_name NOT IN (
             SELECT name
@@ -48,9 +46,7 @@ async function syncKnexAndPrismaMigrations(
   console.log(`> > Synced ${res} migrations from Prisma to Knex`);
 }
 
-export async function syncMigrationTables(
-  params: MigratorParameters,
-): Promise<void> {
+export async function syncMigrationTables(): Promise<void> {
   console.log(
     `> About to sync Knex's migration-tracking table with Prisma's migration table`,
   );
@@ -85,7 +81,7 @@ export async function syncMigrationTables(
       console.log(`> Knex's migration-tracking table is present`);
     }
 
-    await syncKnexAndPrismaMigrations(prisma, params);
+    await syncKnexAndPrismaMigrations(prisma);
     console.log(
       `> Successfully synced Knex's migration-tracking table with Prisma's migration table`,
     );

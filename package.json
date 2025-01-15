@@ -28,6 +28,7 @@
   "dependencies": {
     "chalk": "^5.4.1",
     "inquirer": "^12.3.0",
+    "prisma-diff-to-knex-migration": "^1.0.2",
     "sql-query-identifier": "^2.7.0"
   },
   "devDependencies": {

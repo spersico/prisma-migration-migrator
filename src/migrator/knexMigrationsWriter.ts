@@ -1,4 +1,4 @@
-import { knexMigrationWriter } from '../knexMigrationWriter/knexMigrationsWriter.js';
+import { knexMigrationWriter } from 'prisma-diff-to-knex-migration';
 import type { MigrationData } from './types.js';
 
 export async function knexMigrationsWriter(

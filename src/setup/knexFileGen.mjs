@@ -9,7 +9,7 @@ import {
   textWarning,
 } from './textStyles.mjs';
 
-const standaloneTemplate = `
+const template = `
 // Knex configuration object
 const config = {
   client: 'pg',
@@ -24,33 +24,14 @@ const config = {
 export default config;
 `;
 
-const coLocatedKnexfileTemplate = `
-import { knexFilePrismaAdapter } from 'prisma-migration-migrator';
-
-// Knex configuration object
-const config = knexFilePrismaAdapter({
-  client: 'pg',
-  connection: process.env.DATABASE_URL,
-  migrations: {
-    directory: 'prisma/migrations',
-  },
-});
-
-export default config;
-`;
-
 const dotenvTemplate = `
 import dotenv from 'dotenv';
 dotenv.config();
 `;
 
-function buildKnexfileContent(addDotenv = true, colocated = false) {
-  let knexfileContent = colocated
-    ? coLocatedKnexfileTemplate
-    : standaloneTemplate;
-
+function buildKnexfileContent(addDotenv = true) {
   if (addDotenv)
-    return knexfileContent.replace(
+    return template.replace(
       '// Knex configuration object',
       '// Knex configuration object\n' + dotenvTemplate,
     );
@@ -71,7 +52,7 @@ If you've already created a knexfile.mjs file, this step will overwrite it. Do y
   );
   if (!continues) return;
 
-  const { dotenv, colocated } = await inquirer.prompt([
+  const { dotenv } = await inquirer.prompt([
     {
       type: 'list',
       name: 'dotenv',
@@ -79,18 +60,9 @@ If you've already created a knexfile.mjs file, this step will overwrite it. Do y
 ${textWarning(`If you don't want to add it, it's fine, as long as you set the connection property correctly.`)}`,
       choices: ['Yes', 'No'],
     },
-    {
-      type: 'list',
-      name: 'colocated',
-      message: `Do you wish for the migrations to be co-located with the Prisma migrations?`,
-      choices: ['No', 'Yes'],
-    },
   ]);
 
-  await fs.writeFile(
-    'knexfile.mjs',
-    buildKnexfileContent(dotenv === 'Yes', colocated === 'Yes'),
-  );
+  await fs.writeFile('knexfile.mjs', buildKnexfileContent(dotenv === 'Yes'));
   successLog(
     '> knexfile.mjs created successfully on base directory. Please review it.',
   );

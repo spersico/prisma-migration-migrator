@@ -46,7 +46,3 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 
 export { migrator };
 export type { MigratorParameters as ConvertPrismaMigrationsToKnexMigrationsParameters };
-export {
-  knexFilePrismaAdapter,
-  KnexMigrationSourcePrismaStyle,
-} from './knexfilePrismaAdapter/index.mjs';

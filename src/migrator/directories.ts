@@ -4,13 +4,20 @@ import path from 'node:path';
 import type { MigratorParameters } from './types.js';
 import { findKnexfile } from './knexfileFinder.js';
 
+function getInputDirectory(
+  params: MigratorParameters,
+  baseDir: string,
+): string {
+  return path.join(
+    path.resolve(baseDir, params?.prismaFolderPath || 'prisma'),
+    'migrations',
+  );
+}
+
 /**
- * ONLY USED for standalone migrations.
- * Get the migrations directory from the Knex configuration (`knexfile`) or the `knexfilePath` parameter
- *
- * For co-located migrations, the directory is the same as the Prisma migrations directory
+ * Gets the migrations directory from the Knex configuration (`knexfile`) or the `knexfilePath` parameter
  */
-async function getKnexStandaloneMigrationsDirectory(
+async function getOutputDirectory(
   params: MigratorParameters,
   baseDir: string,
 ): Promise<string | null> {
@@ -48,7 +55,8 @@ async function getKnexStandaloneMigrationsDirectory(
     if (!migrationsDir) {
       console.error(
         `Migrations property not found in the Knex configuration. 
-        BEWARE: You need to specify the migrations extension in the Knex configuration for mjs files. Maybe use the setup script included in this package?. 
+        BEWARE: You need to specify the migrations extension in the Knex configuration for mjs files. 
+        Maybe use the setup script included in this package? (npx prisma-migration-migrator --setup). 
         Otherwise, check the knexfile of this library for a working example.
         Using known default: <project-root>/migrations`,
       );
@@ -75,35 +83,22 @@ export function getBaseDirectory() {
 export async function resolveMigrationDirectories(params?: MigratorParameters) {
   const baseDir = getBaseDirectory();
 
-  let prismaMigrationsDir, knexMigrationsDir;
   try {
-    prismaMigrationsDir = path.join(
-      path.resolve(baseDir, params?.prismaFolderPath || 'prisma'),
-      'migrations',
-    );
+    const prismaMigrationsDir = getInputDirectory(params, baseDir);
     console.log(`> > Converting Prisma migrations from ${prismaMigrationsDir}`);
 
-    if (!params?.colocate) {
-      knexMigrationsDir = await getKnexStandaloneMigrationsDirectory(
-        params,
-        baseDir,
-      );
-      if (!knexMigrationsDir) {
-        throw new Error('Knex migrations directory not found');
-      }
-      console.log(
-        `> > Will locate converted migrations in the directory: ${knexMigrationsDir}`,
-      );
-      await mkdir(knexMigrationsDir, { recursive: true });
-    } else {
-      console.log(
-        `> > Will co-locate converted migrations with Prisma migrations in the same directory`,
-      );
+    const knexMigrationsDir = await getOutputDirectory(params, baseDir);
+    if (!knexMigrationsDir) {
+      throw new Error('Knex migrations directory not found');
     }
+    console.log(
+      `> > Will locate converted migrations in the directory: ${knexMigrationsDir}`,
+    );
+    await mkdir(knexMigrationsDir, { recursive: true });
+
+    return { prismaMigrationsDir, knexMigrationsDir };
   } catch (err) {
     console.error('> Error resolving migration directories:', err);
     throw err;
   }
-
-  return { prismaMigrationsDir, knexMigrationsDir };
 }

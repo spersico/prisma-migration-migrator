@@ -6,5 +6,5 @@ import type { MigratorParameters } from './types.js';
 export async function migrator(params?: MigratorParameters): Promise<void> {
   const migrations = await getMigrationsToMigrate(params);
   await knexMigrationsWriter(migrations);
-  await syncMigrationTables(params);
+  await syncMigrationTables();
 }

@@ -1,5 +1,7 @@
-import { buildSqlFromPrismaSchema } from './knexMigrationWriter/prismaSchemaSqlDiffGen.js';
-import { knexMigrationWriter } from './knexMigrationWriter/knexMigrationsWriter.js';
+import {
+  buildSqlFromPrismaSchema,
+  knexMigrationWriter,
+} from 'prisma-diff-to-knex-migration';
 
 export async function prismaDiffToKnexMigration(params: {
   output: 'console' | 'file';

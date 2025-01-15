@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import type { MigrationData, MigratorParameters } from './types.js';
 import { resolveMigrationDirectories } from './directories.js';
+import { identify } from 'sql-query-identifier';
 
 export function calculateChecksum(data: string): string {
   return createHash('sha256').update(data, 'utf8').digest('hex');
@@ -33,9 +34,10 @@ export async function getMigrationsToMigrate(
                 'migration.sql',
               );
 
-              const finalMigrationPath = params?.colocate
-                ? path.join(prismaMigrationsDir, name, 'migration.mjs')
-                : path.join(knexMigrationsDir, `${name}.mjs`);
+              const finalMigrationPath = path.join(
+                knexMigrationsDir,
+                `${name}.mjs`,
+              );
 
               const alreadyExists = await access(finalMigrationPath)
                 .then(() => true)
@@ -70,7 +72,7 @@ export async function getMigrationsToMigrate(
             name,
             baseSqlPath,
             finalMigrationPath,
-            sql,
+            sql: identify(sql),
             checksum: calculateChecksum(sql),
           })),
       ),
