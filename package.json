@@ -7,8 +7,7 @@
   "private": false,
   "license": "MIT",
   "bin": {
-    "prisma-migration-migrator": "./dist/index.js",
-    "prisma-diff-to-knex": "./dist/prismaDiffToKnexMigration.js"
+    "prisma-migration-migrator": "./dist/index.js"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -27,28 +26,28 @@
   },
   "dependencies": {
     "chalk": "^5.4.1",
-    "inquirer": "^12.3.0",
+    "inquirer": "^12.3.2",
     "prisma-diff-to-knex-migration": "^1.0.2",
-    "sql-query-identifier": "^2.7.0"
+    "sql-query-identifier": "^2.8.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.17.0",
-    "@prisma/client": "^5.22.0",
+    "@eslint/js": "^9.18.0",
+    "@prisma/client": "^6.2.1",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.10.6",
     "@types/pg": "^8.11.10",
-    "@typescript-eslint/eslint-plugin": "^8.19.1",
-    "@typescript-eslint/parser": "^8.19.1",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
     "dotenv": "^16.4.7",
-    "eslint": "^9.17.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.2",
     "globals": "^15.14.0",
     "knex": "^3.1.0",
     "pg": "^8.13.1",
     "prettier": "^3.4.2",
-    "prisma": "^5.22.0",
+    "prisma": "^6.2.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   },
