@@ -5,13 +5,14 @@ import {
 } from './prismaSchemaUpdate.mjs';
 import { getBaseDirectory } from '../migrator/directories.js';
 import path from 'path';
+import { errorLog, warningLog } from './textStyles.mjs';
 
 async function checkKnexFileExistence(baseDir) {
   let knexfileExists = false;
 
   knexfileExists = await findKnexfile(baseDir);
   if (!knexfileExists) {
-    console.log(
+    warningLog(
       `No knexfile found in the project. I'll run the setup script to set up knex and prisma together`,
     );
     return true;
@@ -27,18 +28,20 @@ async function checkPrismaSchema(baseDir, prismaFolderPath = 'prisma') {
   );
   const exists = await prismaSchemaExists(prismaSchemaPath);
   if (!exists) {
-    console.error(
+    errorLog(
       `Prisma schema not found at (${prismaSchemaPath}) - First set Prisma up, then run this script again`,
     );
+
     process.exit(1);
   }
 
   const prismaHasKnexModels = await prismaHasTheKnexModels(prismaSchemaPath);
 
   if (!prismaHasKnexModels) {
-    console.log(
+    warningLog(
       `Prisma schema found at (${prismaSchemaPath}), but it doesn't have the knex models. I'll run the setup script to add them`,
     );
+
     return true;
   }
   return false;

@@ -3,40 +3,44 @@ import type { MigratorParameters } from './migrator/types.js';
 import { migrator } from './migrator/index.js';
 import { setup } from './setup/index.mjs';
 import { checkIfSetupIsNeeded } from './setup/pre-check.mjs';
+import { errorLog, successLog, warningLog } from './setup/textStyles.mjs';
 
 // Function to execute the migrator
-async function executeMigrator() {
-  const args = process.argv.slice(3);
-  const prismaFolderPath = args[2] || 'prisma';
-
+async function executeMigrator({
+  skipCheck,
+  prismaFolderPath,
+}: {
+  skipCheck: boolean;
+  prismaFolderPath: string;
+}): Promise<void> {
   try {
-    if (!args.includes('--skip-check')) {
+    if (!skipCheck) {
       console.log(
         '> No --skip-check flag detected. Checking if setup is needed for knex to run alongside prisma...',
       );
       const setupNeeded = await checkIfSetupIsNeeded({ prismaFolderPath });
       if (setupNeeded) {
-        console.log(
+        warningLog(
           `> Setup is needed. Running setup for knex to run alongside prisma...`,
         );
         await setup();
-        console.log(
+        successLog(
           '> Setup completed. Continuing with the migration conversion process...',
         );
       } else {
-        console.log(
+        successLog(
           '> Setup is not needed. Continuing with the migration conversion process...',
         );
       }
     }
 
     await migrator({ prismaFolderPath });
-    console.log(
+    successLog(
       `Migrations converted successfully. Check the migrations directory.`,
     );
     process.exit(0);
   } catch (err) {
-    console.error(
+    errorLog(
       `Error converting migrations. Check the error message below for more information.`,
     );
     console.error(err);
@@ -44,14 +48,37 @@ async function executeMigrator() {
   }
 }
 
+function getFlags(argv): Record<string, string | boolean> {
+  const filterArgs = (flag) => flag.includes('--');
+  const mapFlags = (flag) => flag.split('--')[1].split('=');
+  const args = argv.slice(2).filter(filterArgs).map(mapFlags);
+  const flagsObj = {};
+
+  for (const arg of args) {
+    flagsObj[arg[0]] = arg[1] || true;
+  }
+  return flagsObj;
+}
+
 // Main function to handle command-line arguments
 async function main() {
-  const args = process.argv.slice(2);
+  const flags: {
+    setup?: boolean;
+    'skip-check'?: boolean;
+    'prisma-folder-path'?: string;
+  } = getFlags(process.argv);
 
-  if (args.includes('--setup')) {
+  if (flags.setup) {
     await setup();
   } else {
-    await executeMigrator();
+    const skipCheck = !!flags['skip-check'];
+    const prismaFolderPath =
+      flags['prisma-folder-path'] &&
+      typeof flags['prisma-folder-path'] === 'string'
+        ? flags['prisma-folder-path']
+        : 'prisma';
+
+    await executeMigrator({ skipCheck, prismaFolderPath });
   }
 }
 

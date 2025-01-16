@@ -35,6 +35,9 @@ READ THIS FIRST! This package doesn't need to be installed. It's a one-time setu
     4. Run the script to convert the existing prisma migrations to knex migrations for the first time.
     5. Create and sync the knex migration history table with the prisma migration history table (so knex only runs the migrations that were not run by prisma).
     
+    > You can optionally pass a second parameter to the script to specify the path to the prisma schema file. By default, it will look for a `schema.prisma` file in the root of your project.
+    
+    > You can also skip the automatic setup script by passing `--skip-check` (it will only run steps 4 and 5).
 3. **Setup done!**. You can use the `create-migration` script to create new migrations, and then run `knex migrate:latest` to run them. 
 From this point on, you don't need this migrator script, and you can use the `prisma-diff-to-knex-migration` package to update the knex migrations with the Prisma SQL, if you want.
 
