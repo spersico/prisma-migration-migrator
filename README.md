@@ -37,7 +37,7 @@ READ THIS FIRST! This package doesn't need to be installed. It's a one-time setu
     
     > You can optionally pass a second parameter to the script to specify the path to the prisma schema file. By default, it will look for a `schema.prisma` file in the root of your project.
     
-    > You can also skip the automatic setup script by passing `--skip-check` (it will only run steps 4 and 5).
+    > You can also skip the automatic setup script by passing `--skip-check` (it will only run steps 4 and 5). If the parameter is not picked up, add an extra -- before it, like this: `npx prisma-migration-migrator -- --skip-check`.
 3. **Setup done!**. You can use the `create-migration` script to create new migrations, and then run `knex migrate:latest` to run them. 
 From this point on, you don't need this migrator script, and you can use the `prisma-diff-to-knex-migration` package to update the knex migrations with the Prisma SQL, if you want.
 
