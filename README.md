@@ -87,4 +87,13 @@ It will then sync the knex migration history table with the prisma migration his
 The script will add a `create-migration` script to your `package.json`. This is the part where you will use the `prisma-diff-to-knex-migration` package to update the knex migrations with the Prisma SQL. The script is not strictly necessary, but it will make your life easier, by generating a starting SQL sentence for you, based on the difference between the prisma schema and the database. You can check the package's documentation for more details on how to use it (it's pretty simple).
 
 > I did this in a separate package to keep everything modular and to avoid adding unnecessary dependencies to your project. I don't want to force you to keep this package installed after the setup is done.
-   
+  
+## Motivation
+
+**I just got frustrated with Prisma migrations.**
+
+I wanted my trusty `up`/`down` pattern for migrations/rollbacks, I wanted to use JS (maybe even TS!), and not just SQL, I wanted out. Knex was there (though Sequelize was also an option, I just thought that Knex, being a query builder, would be more flexible).
+
+I wanted to use it, but it was a pain to set up alongside Prisma.
+
+So I made this to handle the migration, and also [this other package](https://github.com/spersico/prisma-diff-to-knex-migration), for the **nice** part of Prisma migrations: the SQL generation.
