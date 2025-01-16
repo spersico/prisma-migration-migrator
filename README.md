@@ -8,14 +8,14 @@ You can use Prisma to generate the migration SQL, but you never run the migratio
 Instead, from then on, the prisma-generated SQL DDL gets added into Knex migrations.
 
 ## How to use it
-READ THIS FIRST! This package doesn't need to be installed. It's a one-time setup script that will set up everything for you.
+READ THIS FIRST! **This package doesn't need to be installed**. It's a one-time setup script that will set up everything for you.
 
 1. **First, make sure you've got all the dependencies you need**:
   - Knex is obviously required, dotenv is recommended: 
     ```bash
     npm install knex dotenv
     ```
-  - Optionally, to get the augmented knex migrations, you will need this other one: 
+  - Optionally, to get the augmented knex migrations, you will need [this other package](https://github.com/spersico/prisma-diff-to-knex-migration): 
     ```bash
     npm install -D prisma-diff-to-knex-migration
     ```
