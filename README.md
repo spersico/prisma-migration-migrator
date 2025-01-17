@@ -1,5 +1,9 @@
 # Prisma Migration Migrator
 
+**Warning: This is a WIP project. I tested it a bit, but it's not ready for production yet. I appreciate every bug report though!**
+
+**Warning 2: This only works with PostgreSQL right now, I'll probably add SQLite soon...**
+
 A way to use [Knex's migration engine](https://knexjs.org/guide/migrations.html) to run migrations, while keeping Prisma as the source of truth. 
 
 This way, you get the ORM and the auto generation of DDL SQL from Prisma, while gaining the power of Knex's migration engine to run them.
