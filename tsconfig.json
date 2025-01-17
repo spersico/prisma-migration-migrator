@@ -9,7 +9,6 @@
     "module": "NodeNext",
     "declaration": true,
     "rootDirs": ["."],
-    "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,

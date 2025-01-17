@@ -26,10 +26,11 @@ async function checkPrismaSchema(baseDir, prismaFolderPath = 'prisma') {
     prismaFolderPath,
     'schema.prisma',
   );
+  console.log('> Searching for Prisma schema at:', prismaSchemaPath);
   const exists = await prismaSchemaExists(prismaSchemaPath);
   if (!exists) {
     errorLog(
-      `Prisma schema not found at (${prismaSchemaPath}) - First set Prisma up, then run this script again`,
+      `> Prisma schema not found at (${prismaSchemaPath}) - First set Prisma up, then run this script again. Are you running this in the folder containing the Prisma folder?`,
     );
 
     process.exit(1);
@@ -39,7 +40,7 @@ async function checkPrismaSchema(baseDir, prismaFolderPath = 'prisma') {
 
   if (!prismaHasKnexModels) {
     warningLog(
-      `Prisma schema found at (${prismaSchemaPath}), but it doesn't have the knex models. I'll run the setup script to add them`,
+      `> Prisma schema found at (${prismaSchemaPath}), but it doesn't have the knex models. I'll run the setup script to add them`,
     );
 
     return true;

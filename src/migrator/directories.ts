@@ -1,5 +1,4 @@
 import { mkdir } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import type { MigratorParameters } from './types.js';
 import { findKnexfile } from './knexfileFinder.js';
@@ -73,8 +72,7 @@ async function getOutputDirectory(
 }
 
 export function getBaseDirectory() {
-  const __filename = fileURLToPath(import.meta.url);
-  return path.resolve(path.dirname(__filename), '..', '..');
+  return process.cwd();
 }
 
 /**

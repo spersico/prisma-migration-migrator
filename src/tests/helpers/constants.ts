@@ -1,14 +1,8 @@
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { getBaseDirectory } from '../../migrator/directories.js';
 
-// Get the directory name of the current module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const baseDir = path.resolve(__dirname, '..', '..', '..');
-
-const prismaDir = path.join(baseDir, 'prisma');
-const knexMigrationsDir = path.join(prismaDir, 'knex_migrations');
 const prismaSchemaPath = path.resolve('prisma', 'schema.prisma');
+const knexMigrationsDir = path.join(getBaseDirectory(), 'knex_migrations');
 
 const baseDBUrl = 'postgres://myuser:mypassword@localhost:5432';
 const password = 'mypassword';
@@ -18,8 +12,6 @@ const testDbUrl = `${baseDBUrl}/${testDbName}`;
 const expectedInitialNumberOfMigrations = 2;
 
 export {
-  baseDir,
-  prismaDir,
   knexMigrationsDir,
   prismaSchemaPath,
   baseDBUrl,

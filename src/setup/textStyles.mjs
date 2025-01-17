@@ -12,7 +12,7 @@ export const textExtra = chalk.italic.cyan;
 export const successLog = (message, ...args) =>
   console.log(textSuccess(message), ...args);
 export const errorLog = (message, ...args) =>
-  console.log(textError(message), ...args);
+  console.error(textError(message), ...args);
 export const warningLog = (message, ...args) =>
   console.log(textWarning(message), ...args);
 
