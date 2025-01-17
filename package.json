@@ -12,7 +12,6 @@
   "bin": {
     "prisma-migration-migrator": "dist/index.js"
   },
-  "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && rm -rf tsconfig.build.tsbuildinfo && tsc --project tsconfig.build.json",
     "test:migrate:build": "npm run build && node ./dist/index.js",
