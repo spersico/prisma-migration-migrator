@@ -1,6 +1,6 @@
 {
   "name": "prisma-migration-migrator",
-  "version": "0.0.17",
+  "version": "0.0.16",
   "description": "Replace Prisma as the migration engine with Knex, while keeping it as ORM",
   "type": "module",
   "author": "spersico",
@@ -9,7 +9,9 @@
   "files": [
     "/dist"
   ],
-  "bin": "./dist/index.js",
+  "bin": {
+    "prisma-migration-migrator": "dist/index.js"
+  },
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && rm -rf tsconfig.build.tsbuildinfo && tsc --project tsconfig.build.json",
@@ -24,9 +26,9 @@
   "dependencies": {
     "chalk": "^5.4.1",
     "inquirer": "^12.3.2",
-    "prisma-diff-to-knex-migration": "^1.0.2",
+    "prisma-diff-to-knex-migration": "^1.0.14",
     "sql-query-identifier": "^2.8.0",
-    "@prisma/client": "^6.2.1"
+    "@prisma/client": "*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -50,7 +52,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spersico/prisma-migration-migrator"
+    "url": "git+https://github.com/spersico/prisma-migration-migrator.git"
   },
   "bugs": {
     "url": "https://github.com/spersico/prisma-migration-migrator/issues"
