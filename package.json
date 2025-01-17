@@ -1,6 +1,6 @@
 {
   "name": "prisma-migration-migrator",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "Replace Prisma as the migration engine with Knex, while keeping it as ORM",
   "type": "module",
   "author": "spersico",
