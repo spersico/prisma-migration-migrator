@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { fileURLToPath } from 'node:url';
 import type { MigratorParameters } from './migrator/types.js';
 import { migrator } from './migrator/index.js';
