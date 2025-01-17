@@ -1,7 +1,7 @@
 {
   "name": "prisma-migration-migrator",
   "version": "0.0.15",
-  "description": "Replace Prisma as the migration engine with Knex, while keeping Prisma as ORM",
+  "description": "Replace Prisma as the migration engine with Knex, while keeping it as ORM",
   "type": "module",
   "author": "spersico",
   "private": false,
@@ -9,9 +9,7 @@
   "files": [
     "/dist"
   ],
-  "bin": {
-    "prisma-migration-migrator": "./dist/index.js"
-  },
+  "bin": "./dist/index.js",
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && rm -rf tsconfig.build.tsbuildinfo && tsc --project tsconfig.build.json",
