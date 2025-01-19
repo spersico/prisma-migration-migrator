@@ -46,6 +46,11 @@ This step will create a ${textExtra('knexfile.mjs')} file on the base directory.
 
 ${textExtra(`Note: We use mjs because knex's support of it is more reliable than with Typescript. 
   Using mjs gives us modern JS, without being problematic to use.`)}
+  
+  
+${textExtra(`Note: The generated knexfile assumes a PostgreSQL database. 
+  If you're using another database, please update the file accordingly, by following the knex documentation: https://knexjs.org/guide/#installation`)}
+  
 
 If you've already created a knexfile.mjs file, this step will overwrite it. Do you wish to proceed?`,
     'Knexfile creation step skipped.',
