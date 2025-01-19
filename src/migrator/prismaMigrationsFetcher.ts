@@ -3,7 +3,6 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import type { MigrationData, MigratorParameters } from './types.js';
 import { resolveMigrationDirectories } from './directories.js';
-import { identify } from 'sql-query-identifier';
 
 export function calculateChecksum(data: string): string {
   return createHash('sha256').update(data, 'utf8').digest('hex');
@@ -72,7 +71,7 @@ export async function getMigrationsToMigrate(
             name,
             baseSqlPath,
             finalMigrationPath,
-            sql: identify(sql),
+            sql: sql,
             checksum: calculateChecksum(sql),
           })),
       ),

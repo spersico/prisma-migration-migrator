@@ -26,8 +26,7 @@
   "dependencies": {
     "chalk": "^5.4.1",
     "inquirer": "^12.3.2",
-    "prisma-diff-to-knex-migration": "^1.0.14",
-    "sql-query-identifier": "^2.8.0"
+    "prisma-diff-to-knex-migration": "^1.0.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
