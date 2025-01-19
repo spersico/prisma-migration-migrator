@@ -15,9 +15,9 @@ const prismaSchemaFile_knexModels = `
 model knex_migrations {
   @@ignore
   id             Int       @id @default(autoincrement())
-  name           String?
+  name           String?   @db.VarChar(255)
   batch          Int?
-  migration_time DateTime?
+  migration_time DateTime? @db.Timestamptz(6)
 }
 
 model knex_migrations_lock {
