@@ -10,7 +10,7 @@ export const packageJsonShortcutScripts = {
   },
   sync: {
     name: 'migration:sync',
-    script: 'npx ./sync-knex-prisma-migrations-history.mjs',
+    script: 'node ./sync-knex-prisma-migrations-history.mjs',
   },
 };
 
