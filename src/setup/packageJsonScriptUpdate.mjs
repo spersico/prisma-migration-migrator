@@ -12,6 +12,10 @@ export const packageJsonShortcutScripts = {
     name: 'migration:sync',
     script: 'node ./sync-knex-prisma-migrations-history.mjs',
   },
+  apply: {
+    name: 'migration:apply',
+    script: 'npx knex migrate:latest && npx prisma generate',
+  },
 };
 
 export async function packageJsonScriptUpdate({
