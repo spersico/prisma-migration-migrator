@@ -32,11 +32,6 @@ async function syncKnexAndPrismaMigrationHistory(baseDir = './') {
     knexClient.schema.hasTable('knex_migrations_lock'),
   ]);
 
-  if (!prisma) {
-    console.warn('Prisma migrations table not found - Skipping sync');
-    return 0;
-  }
-
   if (!knex_migrations) {
     console.log('Knex migrations table not found - Creating table');
     await knexClient.schema.createTable('knex_migrations', function (table) {
@@ -58,6 +53,11 @@ async function syncKnexAndPrismaMigrationHistory(baseDir = './') {
       },
     );
     console.log(`Created Knex's migrations_lock table`);
+  }
+
+  if (!prisma) {
+    console.warn('Prisma migrations table not found - Skipping sync');
+    return 0;
   }
 
   console.log('Syncing knex and prisma migration history');
