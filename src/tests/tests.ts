@@ -51,7 +51,7 @@ async function test(parameters: TestParameters) {
 
 const acceptanceCases: TestParameters[] = [
   { dbUrl },
-  // { dbUrl, skipInitialPrismaMigrationRun: true },
+  { dbUrl, skipInitialPrismaMigrationRun: true },
 ];
 
 async function executeAllTests() {
