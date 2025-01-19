@@ -23,6 +23,6 @@
     "lib": ["es2022"],
     "types": ["node"]
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*"],
   "exclude": ["node_modules"]
 }
