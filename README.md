@@ -15,7 +15,7 @@ READ THIS FIRST! **This package doesn't need to be installed**. It's a one-time 
 1. **First, make sure you've got all the dependencies you need**:
   - Knex is obviously required, dotenv is recommended: 
     ```bash
-    npm install knex dotenv
+    npm install knex dotenv pg
     ```
   - Optionally, to get the augmented knex migrations, you will need [this other package](https://github.com/spersico/prisma-diff-to-knex-migration): 
     ```bash
