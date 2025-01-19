@@ -1,12 +1,13 @@
 import { knexFileGen } from './knexFileGen.mjs';
 import { prismaSchemaUpdate } from './prismaSchemaUpdate.mjs';
-import { packageJsonScriptUpdate } from './packageJsonScriptUpdate.mjs';
+import { packageJsonScriptGenerate } from './packageJsonGenerateScript.mjs';
 import {
   confirmationPrompt,
   successLog,
   textImportant,
   textTitle,
 } from './textStyles.mjs';
+import { syncMigrationsScript } from './syncMigrationsScript.mjs';
 
 export async function setup() {
   const continues = await confirmationPrompt(
@@ -23,7 +24,9 @@ Do you want to proceed?`,
 
   await prismaSchemaUpdate();
 
-  await packageJsonScriptUpdate();
+  await syncMigrationsScript();
+
+  await packageJsonScriptGenerate();
 
   successLog('Setup completed successfully.');
 }

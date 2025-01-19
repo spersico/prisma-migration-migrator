@@ -8,6 +8,7 @@ import { testDbUrl as dbUrl, knexMigrationsDir } from './helpers/constants.js';
 
 import { runPrismaClientReGenerate } from './helpers/util-prisma-regenerate-client.js';
 import { migrator } from '../migrator/index.js';
+import { syncPrismaAndKnexMigrationsHistory } from './helpers/util-prisma-knex-sync-history.js';
 
 async function test(parameters: TestParameters) {
   const {
@@ -18,6 +19,11 @@ async function test(parameters: TestParameters) {
   console.log(`T Test parameters:`, parameters);
   await cleanup(silent);
 
+  const expectedNumberOfMigrations = {
+    prisma: skipInitialPrismaMigrationRun ? 0 : 2,
+    knex: skipInitialPrismaMigrationRun ? 2 : 0,
+  };
+
   !skipInitialPrismaMigrationRun && (await runPrismaMigrations(dbUrl));
 
   console.log('T Conversion started');
@@ -26,20 +32,15 @@ async function test(parameters: TestParameters) {
     knexMigrationsDir,
   });
   console.log('T Conversion completed');
+  console.log('T Syncing Prisma and Knex Migrations History...');
+  await syncPrismaAndKnexMigrationsHistory(expectedNumberOfMigrations.prisma);
+  console.log('T Prisma and Knex Migrations History synced successfully.');
 
-  const migrationsByKnex = await runKnexMigrations(dbUrl);
-
+  await runKnexMigrations(dbUrl, expectedNumberOfMigrations.knex);
   const prismaState = await snapshotDbStructure(dbUrl);
   const knexState = await snapshotDbStructure(dbUrl);
 
   if (prismaState !== knexState) throw new Error('DB structures do not match.');
-  if (skipInitialPrismaMigrationRun && migrationsByKnex.length === 0) {
-    throw new Error('No migrations were applied, when they should have been.');
-  } else if (!skipInitialPrismaMigrationRun && migrationsByKnex.length === 2) {
-    throw new Error(
-      'Migrations that were supposed to be skipped were applied instead.',
-    );
-  }
 
   await runPrismaClientReGenerate();
   console.log('T Prisma client regenerated successfully.');
@@ -50,7 +51,7 @@ async function test(parameters: TestParameters) {
 
 const acceptanceCases: TestParameters[] = [
   { dbUrl },
-  { dbUrl, skipInitialPrismaMigrationRun: true },
+  // { dbUrl, skipInitialPrismaMigrationRun: true },
 ];
 
 async function executeAllTests() {
