@@ -8,10 +8,9 @@ export const packageJsonShortcutScripts = {
     script:
       'npx knex migrate:make migration | npx prisma-diff-to-knex-migration',
   },
-  latest: {
-    name: 'migration:latest',
-    script:
-      'npx ./sync-knex-prisma-migrations-history && npx knex migrate:latest',
+  sync: {
+    name: 'migration:sync',
+    script: 'npx ./sync-knex-prisma-migrations-history.mjs',
   },
 };
 

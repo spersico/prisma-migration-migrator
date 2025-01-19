@@ -18,7 +18,7 @@ import { fileURLToPath } from 'url';
  * Adds a script to project, that syncs the migrations history between Prisma and Knex
  */
 export async function syncMigrationsScript() {
-  const { latest } = packageJsonShortcutScripts;
+  const { sync } = packageJsonShortcutScripts;
   const continues = await confirmationPrompt(
     `${textTitle('-------------------------\nSync Migrations Script Step\n---------------------------')}
 Both Prisma and knex have their own way of tracking migrations, so that they don't run the same migrations twice.
@@ -31,9 +31,8 @@ You will have to run it wherever you want to avoid knex running migrations that 
 Running the script is a one-time operation, that ${textExtra(`NEEDS to happen on each environment where you run migrations.`)}
 Otherwise, knex might run migrations that Prisma has already applied.
 
-I will also add the following script to your package.json, so that you can run it easily before migrating with knex:
-${textExtra(latest.name)}: ${textExtra(latest.script)}
-I won't run it for you, so you can run it whenever you want.
+I will also add the following script to your package.json, so that you can run it easily before applying your migrations with knex:
+${textExtra(sync.name)}: ${textExtra(sync.script)}
 
 Do you want to proceed?`,
     `The script won't be added. You can add it later by running this script plus the -- --setup flag.`,
@@ -66,8 +65,8 @@ Do you want to proceed?`,
 
   try {
     console.log('Adding script to package.json...');
-    await packageJsonScriptUpdate(latest);
-    successLog(`Script "${latest.name}" added to package.json successfully.`);
+    await packageJsonScriptUpdate(sync);
+    successLog(`Script "${sync.name}" added to package.json successfully.`);
   } catch (error) {
     errorLog('Error updating package.json:', error);
     process.exit(1);
