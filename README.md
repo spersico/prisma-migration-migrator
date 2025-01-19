@@ -13,7 +13,7 @@ Instead, from then on, the prisma-generated SQL DDL gets added into Knex migrati
 READ THIS FIRST! **This package doesn't need to be installed**. It's a one-time setup script that will set up everything for you.
 
 1. **First, make sure you've got all the dependencies you need**:
-  - Knex is obviously required, dotenv is recommended: 
+  - Knex is obviously required, pg is the driver that knex uses for PostgreSQL (read more [here](https://knexjs.org/guide/#node-js)) dotenv is recommended to pick up the env variables: 
     ```bash
     npm install knex dotenv pg
     ```
