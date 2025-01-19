@@ -1,8 +1,6 @@
 # Prisma Migration Migrator
 
-**Warning: This is a WIP project. I tested it a bit, but it's not ready for production yet. I appreciate every bug report though!**
-
-**Warning 2: This only works with PostgreSQL right now, I'll probably add SQLite soon...**
+**Warning: This is a learning project for me. I make no promises about mantainance. I tested it a bit wiht PostgreSQL, but it's not ready for production yet. I welcome issues and PRs, though!**
 
 A way to use [Knex's migration engine](https://knexjs.org/guide/migrations.html) to run migrations, while keeping Prisma as the source of truth. 
 
