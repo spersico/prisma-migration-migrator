@@ -14,7 +14,8 @@ export const packageJsonShortcutScripts = {
   },
   apply: {
     name: 'migration:apply',
-    script: 'npx knex migrate:latest && npx prisma generate',
+    script:
+      'npm run migration:sync && npx knex migrate:latest && npx prisma generate',
   },
 };
 
