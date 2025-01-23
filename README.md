@@ -1,6 +1,6 @@
 # Prisma Migration Migrator
 
-**Warning: This is a learning project for me. I make no promises about mantainance.I haven't tested this on a production environment. I welcome issues and PRs, though!**
+**Warning: This is a side project for me. I haven't tested this on a production environment. I welcome issues and PRs, though!**
 
 **DB Compatibility: I developed this with PostgreSQL in mind, and I tested it with success with MySQL 8.X. The DDL generation didn't work that well on MySQL5 and SQLite. The migration still works though, but bear this warning in mind, if you've got issues on those DBs**
 
@@ -10,6 +10,7 @@ This way, you get the ORM and the auto generation of DDL SQL from Prisma, while 
 
 You can use Prisma to generate the migration SQL, but you don't need Prisma anymore to run the migrations. 
 Instead, from then on, the prisma-generated SQL DDL gets added into Knex migrations (with the help of [this package](https://github.com/spersico/prisma-diff-to-knex-migration)).
+
 
 ## How to use it
 
